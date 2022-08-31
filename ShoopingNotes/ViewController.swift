@@ -9,11 +9,20 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var tableView: UITableView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any sadditional setup after loading the view.
+        
+        navigationController?.navigationBar.topItem?.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addBtn))
+        
     }
 
-
+    @objc func addBtn(){
+        
+        performSegue(withIdentifier: "toDetailsVC", sender: nil)
+        
+    }
+    
 }
 
