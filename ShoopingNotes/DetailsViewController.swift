@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class DetailsViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
@@ -53,6 +54,36 @@ class DetailsViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @IBAction func saveBtn(_ sender: Any) {
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let context = appDelegate.persistentContainer.viewContext
+        
+        let shoopingNote = NSEntityDescription.insertNewObject(forEntityName: "ShopNote", into: context)
+        
+        shoopingNote.setValue(UUID(), forKey: "id")
+        shoopingNote.setValue(nameTextField.text, forKey: "name")
+        shoopingNote.setValue(brandTextField.text, forKey: "brand")
+        shoopingNote.setValue(sizeTextField.text, forKey: "size")
+        
+        if let price = Int(priceTextField.text!) {
+            shoopingNote.setValue(price, forKey: "price")
+        }
+        
+        let data = imageView.image!.jpegData(compressionQuality: 0.5)
+        
+        shoopingNote.setValue(data, forKey: "image")
+        
+        
+        do{
+            try context.save()
+            print("kaydedildi")
+        } catch {
+            print("hata")
+        }
+                
+            
+        
+        
     
     }
     
