@@ -9,11 +9,14 @@ import UIKit
 import CoreData
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-
+    
     @IBOutlet weak var tableView: UITableView!
     
     var nameArr = [String]()
     var idArr = [UUID]()
+    
+    var sendName = ""
+    var sendUUID: UUID?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,12 +29,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         getDatas()
         
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         NotificationCenter.default.addObserver(self, selector: #selector(getDatas), name: NSNotification.Name(rawValue: "clickedSaveBtn"), object: nil)
     }
     
     @objc func addBtn(){
+        sendUUID = nil
         performSegue(withIdentifier: "toDetailsVC", sender: nil)
         
     }
@@ -61,27 +65,50 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             
             let results = try context.fetch(fetchRequest)
             
-            for result in results as! [NSManagedObject] {
+            if results.count > 0 {
                 
-                if let name = result.value(forKey: "name") as? String {
-                    nameArr.append(name)
+                for result in results as! [NSManagedObject] {
+                    
+                    if let name = result.value(forKey: "name") as? String {
+                        nameArr.append(name)
+                    }
+                    
+                    if let id = result.value(forKey: "id") as? UUID {
+                        idArr.append(id)
+                    }
+                    
                 }
                 
-                if let id = result.value(forKey: "id") as? UUID {
-                    idArr.append(id)
-                }
-                
+                tableView.reloadData()
+        
             }
-            
-            tableView.reloadData()
             
         } catch {
             
             print("hata")
-        
+            
         }
         
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "toDetailsVC" {
+            
+            let destinationVC = segue.destination as! DetailsViewController
+            destinationVC.receiveName = sendName
+            destinationVC.recieveUUID = sendUUID
+            
+        }
+        
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        sendName = nameArr[indexPath.row]
+        sendUUID = idArr[indexPath.row]
+        
+        performSegue(withIdentifier: "toDetailsVC", sender: nil)
+    }
+    
     
 }
 

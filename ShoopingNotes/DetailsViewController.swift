@@ -9,16 +9,69 @@ import UIKit
 import CoreData
 
 class DetailsViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-
+    
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var brandTextField: UITextField!
     @IBOutlet weak var sizeTextField: UITextField!
     @IBOutlet weak var priceTextField: UITextField!
     
+    var receiveName = ""
+    var recieveUUID: UUID?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        if receiveName != "" {
+            
+            if let uuidString = recieveUUID?.uuidString {
+                
+                let appDelegate = UIApplication.shared.delegate as! AppDelegate
+                let context = appDelegate.persistentContainer.viewContext
+                
+                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ShopNote")
+                fetchRequest.predicate = NSPredicate(format: "id = %@", uuidString)
+                fetchRequest.returnsObjectsAsFaults = false
+                
+                do {
+                    let results = try context.fetch(fetchRequest)
+                    
+                    if results.count > 0 {
+                        
+                        for result in results as! [NSManagedObject]{
+                            
+                            if let name = result.value(forKey: "name") as? String {
+                                nameTextField.text = name
+                            }
+                            if let brand = result.value(forKey: "brand") as? String {
+                                brandTextField.text = brand
+                            }
+                            if let size = result.value(forKey: "size") as? String {
+                                sizeTextField.text = size
+                            }
+                            if let price = result.value(forKey: "price") as? Int {
+                                priceTextField.text = String(price)
+                            }
+                            if let imageData = result.value(forKey: "image") as? Data {
+                                let image = UIImage(data: imageData)
+                                imageView.image = image
+                            }
+                        }
+                    }
+                } catch {
+                
+                }
+            }
+            
+        } else {
+            
+            nameTextField.text = ""
+            brandTextField.text = ""
+            sizeTextField.text = ""
+            priceTextField.text = ""
+            
+        }
+        
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(closeKeyboard))
         view.addGestureRecognizer(gestureRecognizer)
         
@@ -43,7 +96,7 @@ class DetailsViewController: UIViewController, UIImagePickerControllerDelegate, 
         imageView.image = info[.editedImage] as? UIImage
         self.dismiss(animated: true, completion: nil)
         // info.plist -> Privacy - Media Library Usage
-    
+        
     }
     
     
@@ -80,7 +133,7 @@ class DetailsViewController: UIViewController, UIImagePickerControllerDelegate, 
         } catch {
             print("hata")
         }
-                
+        
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: "clickedSaveBtn"), object: nil)
         self.navigationController?.popViewController(animated: true)
     }
