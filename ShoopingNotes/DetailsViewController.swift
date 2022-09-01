@@ -81,10 +81,8 @@ class DetailsViewController: UIViewController, UIImagePickerControllerDelegate, 
             print("hata")
         }
                 
-            
-        
-        
-    
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "clickedSaveBtn"), object: nil)
+        self.navigationController?.popViewController(animated: true)
     }
     
 }

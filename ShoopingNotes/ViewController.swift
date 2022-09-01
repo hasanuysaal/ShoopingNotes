@@ -27,6 +27,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        NotificationCenter.default.addObserver(self, selector: #selector(getDatas), name: NSNotification.Name(rawValue: "clickedSaveBtn"), object: nil)
+    }
+    
     @objc func addBtn(){
         performSegue(withIdentifier: "toDetailsVC", sender: nil)
         
@@ -42,7 +46,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell
     }
     
-    func getDatas() {
+    @objc func getDatas() {
+        
+        nameArr.removeAll(keepingCapacity: false)
+        idArr.removeAll(keepingCapacity: false)
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
