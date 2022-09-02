@@ -35,6 +35,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     @objc func addBtn(){
+        sendName = ""
         sendUUID = nil
         performSegue(withIdentifier: "toDetailsVC", sender: nil)
         

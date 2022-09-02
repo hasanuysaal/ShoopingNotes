@@ -15,6 +15,7 @@ class DetailsViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet weak var brandTextField: UITextField!
     @IBOutlet weak var sizeTextField: UITextField!
     @IBOutlet weak var priceTextField: UITextField!
+    @IBOutlet weak var saveButton: UIButton!
     
     var receiveName = ""
     var recieveUUID: UUID?
@@ -23,6 +24,8 @@ class DetailsViewController: UIViewController, UIImagePickerControllerDelegate, 
         super.viewDidLoad()
         
         if receiveName != "" {
+            
+            saveButton.isHidden = true
             
             if let uuidString = recieveUUID?.uuidString {
                 
@@ -65,6 +68,8 @@ class DetailsViewController: UIViewController, UIImagePickerControllerDelegate, 
             
         } else {
             
+            saveButton.isHidden = false
+            saveButton.isEnabled = false
             nameTextField.text = ""
             brandTextField.text = ""
             sizeTextField.text = ""
@@ -94,6 +99,7 @@ class DetailsViewController: UIViewController, UIImagePickerControllerDelegate, 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
         imageView.image = info[.editedImage] as? UIImage
+        saveButton.isEnabled = true
         self.dismiss(animated: true, completion: nil)
         // info.plist -> Privacy - Media Library Usage
         
